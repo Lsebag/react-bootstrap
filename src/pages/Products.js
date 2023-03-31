@@ -1,16 +1,26 @@
 import { useState, useEffect } from "react";
-import ProductSnippet from "../components/ProductSnippet";
+import axios from "axios";
+import ProductsTable from "../components/ProductTable";
 
-export default function Products() {
-  const [products, setProducts] = useState([]);
+function Products() {
+  const [products, setProducts] = useState(null);
 
+  // Así es con fetch
+  // useEffect(() => {
+  //   fetch(`http://localhost:3005/products/`)
+  //     .then((response) => response.json())
+  //     .then((data) => setProducts(data));
+  // }, []);
+
+  // Así es con axios
   useEffect(() => {
-    fetch(`http://localhost:3005/products/`)
-      .then((response) => response.json())
-      .then((data) => setProducts(data));
+    axios
+      .get(`http://localhost:3005/products/`)
+      .then((response) => setProducts(response.data));
+    // .catch((error)=>)
   }, []);
 
-  if (products.length === 0) {
+  if (!products) {
     return <div>Cargando...</div>;
   }
   console.log(products);
@@ -28,9 +38,12 @@ export default function Products() {
         </div>
       ))} */}
 
-      {products.map((product) => (
+      {/* {products.map((product) => (
         <ProductSnippet key={product.id} product={product} />
-      ))}
+      ))} */}
+      <ProductsTable products={products} />
     </>
   );
 }
+
+export default Products;
