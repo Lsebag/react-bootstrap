@@ -5,7 +5,7 @@ export default function ProductRow({ product }) {
     <tr>
       <td>{product.id}</td>
       <td style={{ textDecoration: "underline", cursor: "pointer" }}>
-        <LinkContainer to={`/products/${product.id}`}>
+        <LinkContainer to={`/product/${product.id}`}>
           {
             // eslint-disable-next-line
           }
