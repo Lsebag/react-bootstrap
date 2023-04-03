@@ -3,8 +3,8 @@ import axios from "axios";
 import ProductsTable from "../components/ProductTable";
 // import { ListGroup } from "react-bootstrap";
 // import { useLocation } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import OptionList from "../components/OptionList.js";
+import { useParams, useNavigate } from "react-router-dom";
+import OptionGrid from "../components/OptionGrid.js";
 
 let uniqueCategories;
 
@@ -14,6 +14,10 @@ function Products() {
   //  console.log(location?.state?.category || "");
   const { category: defaultCategory, subcategory: defaultSubcategory } =
     useParams();
+
+  // Esto es para que me pinte la URL a medida que navego
+  const navigate = useNavigate();
+
   const [products, setProducts] = useState();
   // const [category, setCategory] = useState("");
   const [category, setCategory] = useState(defaultCategory);
@@ -40,15 +44,29 @@ function Products() {
     // .catch((error)=>)
   }, []);
 
+  // Esto es para que me pinte la URL a medida que navego
+  useEffect(() => {
+    setCategory(defaultCategory);
+    setSubcategory(defaultSubcategory);
+  }, [defaultCategory, defaultSubcategory]);
+
   if (!products) {
     return <div>Cargando...</div>;
   }
 
   const selectCategory = (event) => {
-    setCategory(event.target.innerText);
-    setSubcategory("");
+    // setCategory(event.target.innerText);
+    // setSubcategory("");
+
+    // Esto es para que me pinte la URL a medida que navego
+    navigate(`/products/${event.target.innerText}`);
   };
-  const selectSubcategory = (event) => setSubcategory(event.target.innerText);
+  const selectSubcategory = (event) => {
+    // setSubcategory(event.target.innerText);
+
+    // Esto es para que me pinte la URL a medida que navego
+    navigate(`/products/${category}/${event.target.innerText}`);
+  };
 
   const uniqueSubcategories = [
     ...new Set(
@@ -67,16 +85,18 @@ function Products() {
     <>
       <h1>Productos</h1>
       <p>Selecciona alguna categoría para ver nuestros productos:</p>
-      <OptionList
-        items={uniqueCategories}
-        defaultItem={category}
-        onClick={selectCategory}
-      />
+      {!category && (
+        <OptionGrid
+          items={uniqueCategories}
+          defaultItem={category}
+          onClick={selectCategory}
+        />
+      )}
       {category && (
         <>
           <p>Selecciona alguna subcategoría para ver nuestros productos:</p>
 
-          <OptionList
+          <OptionGrid
             items={uniqueSubcategories}
             defaultItem={subcategory}
             onClick={selectSubcategory}

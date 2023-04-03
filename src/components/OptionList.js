@@ -1,4 +1,4 @@
-import { ListGroup } from "react-bootstrap";
+import ListGroup from "react-bootstrap/ListGroup";
 
 export default function OptionList(props) {
   const { items, defaultItem, onClick } = props;
