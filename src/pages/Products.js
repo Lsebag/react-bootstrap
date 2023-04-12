@@ -12,16 +12,17 @@ function Products() {
   //  let location = useLocation();
   // console.log(location?.state?.category, "**************");
   //  console.log(location?.state?.category || "");
-  const { category: defaultCategory, subcategory: defaultSubcategory } =
-    useParams();
+  // const { category: defaultCategory, subcategory: defaultSubcategory } =
+  const { category, subcategory } = useParams();
 
   // Esto es para que me pinte la URL a medida que navego
   const navigate = useNavigate();
 
   const [products, setProducts] = useState();
   // const [category, setCategory] = useState("");
-  const [category, setCategory] = useState(defaultCategory);
-  const [subcategory, setSubcategory] = useState(defaultSubcategory);
+
+  // const [category, setCategory] = useState(defaultCategory);
+  // const [subcategory, setSubcategory] = useState(defaultSubcategory);
 
   // Así es con fetch
   // useEffect(() => {
@@ -32,9 +33,13 @@ function Products() {
 
   // Así es con axios
   useEffect(() => {
-    axios.get(`http://localhost:3000/products/`).then(({ data }) => {
+    axios.get(`http://localhost:3005/products/`).then(({ data }) => {
       const categories = data.map((product) => product.masterCategory);
       uniqueCategories = [...new Set(categories)];
+
+      // uniqueCategories=['category1','category2','category3']
+      // uniqueCategories=[{name:'category1',img:'ruta-img'},{name:'category2',img:'ruta-img'},{name:'category3',img:'ruta-img'}]
+
       setProducts(data);
     });
     // .then((response) => {const categories = response.data.map((product) => product.masterCategory)
@@ -45,28 +50,27 @@ function Products() {
   }, []);
 
   // Esto es para que me pinte la URL a medida que navego
-  useEffect(() => {
-    setCategory(defaultCategory);
-    setSubcategory(defaultSubcategory);
-  }, [defaultCategory, defaultSubcategory]);
+  // useEffect(() => {
+  //   setCategory(defaultCategory);
+  //   setSubcategory(defaultSubcategory);
+  // }, [defaultCategory, defaultSubcategory]);
 
   if (!products) {
     return <div>Cargando...</div>;
   }
 
-  const selectCategory = (event) => {
-    // setCategory(event.target.innerText);
-    // setSubcategory("");
-
-    // Esto es para que me pinte la URL a medida que navego
+  const selectCategory = (event) =>
     navigate(`/products/${event.target.innerText}`);
-  };
-  const selectSubcategory = (event) => {
-    // setSubcategory(event.target.innerText);
+  // setCategory(event.target.innerText);
+  // setSubcategory("");
 
-    // Esto es para que me pinte la URL a medida que navego
+  // Esto es para que me pinte la URL a medida que navego
+
+  const selectSubcategory = (event) =>
     navigate(`/products/${category}/${event.target.innerText}`);
-  };
+  // setSubcategory(event.target.innerText);
+
+  // Esto es para que me pinte la URL a medida que navego
 
   const uniqueSubcategories = [
     ...new Set(
@@ -90,6 +94,7 @@ function Products() {
           items={uniqueCategories}
           defaultItem={category}
           onClick={selectCategory}
+          goUp={false}
         />
       )}
       {category && (
@@ -100,6 +105,7 @@ function Products() {
             items={uniqueSubcategories}
             defaultItem={subcategory}
             onClick={selectSubcategory}
+            goUp={true}
           />
         </>
       )}
