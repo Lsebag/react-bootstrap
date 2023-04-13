@@ -34,11 +34,19 @@ function Products() {
   // Así es con axios
   useEffect(() => {
     axios.get(`http://localhost:3005/products/`).then(({ data }) => {
-      const categories = data.map((product) => product.masterCategory);
-      uniqueCategories = [...new Set(categories)];
+      // const categories = data.map((product) => product.masterCategory);
+      // uniqueCategories = [...new Set(categories)];
 
       // uniqueCategories=['category1','category2','category3']
       // uniqueCategories=[{name:'category1',img:'ruta-img'},{name:'category2',img:'ruta-img'},{name:'category3',img:'ruta-img'}]
+      uniqueCategories = data.reduce((acc, product) => {
+        const { masterCategory: category, id } = product;
+        const categoryExists = acc.find((item) => item.name === category);
+        if (!categoryExists) {
+          acc.push({ name: category, id });
+        }
+        return acc;
+      }, []);
 
       setProducts(data);
     });
@@ -60,30 +68,43 @@ function Products() {
   }
 
   const selectCategory = (event) =>
-    navigate(`/products/${event.target.innerText}`);
+    navigate(`/products/${event.target.innerText || event.target.alt}`);
   // setCategory(event.target.innerText);
   // setSubcategory("");
 
-  // Esto es para que me pinte la URL a medida que navego
+  const loadProduct = (event) => navigate(`/product/${event.target.id}`);
 
   const selectSubcategory = (event) =>
-    navigate(`/products/${category}/${event.target.innerText}`);
+    event.target.innerText || event.target.alt === "Volver"
+      ? navigate(`/products`)
+      : navigate(
+          `/products/${category}/${event.target.innerText || event.target.alt}`
+        );
   // setSubcategory(event.target.innerText);
 
   // Esto es para que me pinte la URL a medida que navego
 
-  const uniqueSubcategories = [
-    ...new Set(
-      products
-        .filter((product) => product.masterCategory === category)
-        .map((product) => product.subCategory)
-    ),
-  ];
+  const uniqueSubcategories = products
+    .filter((product) => product.masterCategory === category)
+    .reduce((acc, product) => {
+      const { subCategory, id } = product;
+      const subcategoryExists = acc.find((item) => item.name === subCategory);
+      if (!subcategoryExists) {
+        acc.push({ name: subCategory, id });
+      }
+      return acc;
+    }, []);
+  // .map((product) => product.subCategory);
 
   // Aquí le digo que me recorra el array de products y que me los devuelva solo si el masterCategory es igual a la categoría
   const filterProducts = products
     .filter((product) => product.masterCategory === category)
-    .filter((product) => product.subCategory === subcategory);
+    .filter((product) => product.subCategory === subcategory)
+    .map(({ productDisplayName: name, id, price }) => ({
+      name,
+      id,
+      price,
+    }));
 
   return (
     <>
@@ -92,7 +113,6 @@ function Products() {
       {!category && (
         <OptionGrid
           items={uniqueCategories}
-          defaultItem={category}
           onClick={selectCategory}
           goUp={false}
         />
@@ -123,7 +143,10 @@ function Products() {
         <ProductSnippet key={product.id} product={product} />
       ))} */}
 
-      {category && subcategory && <ProductsTable products={filterProducts} />}
+      {/* {category && subcategory && <ProductsTable products={filterProducts} />} */}
+      {category && subcategory && (
+        <OptionGrid items={filterProducts} onClick={loadProduct} goUp={false} />
+      )}
       {/* <ProductsTable products={products} /> */}
     </>
   );

@@ -1,7 +1,7 @@
 import Card from "react-bootstrap/Card";
 
 export default function OptionGrid(props) {
-  const { items, onClick, goUp } = props;
+  const { items, onClick, goUp, defaultItem } = props;
   return (
     <div style={{ display: "flex", flexWrap: "wrap" }}>
       {goUp && (
@@ -12,26 +12,33 @@ export default function OptionGrid(props) {
         >
           <Card.Img
             variant="top"
-            src={`https://juanda.certweb.infenlaces.com/images/6745.jpg`}
+            src={`https://cdn-icons-png.flaticon.com/512/61/61449.png?w=360`}
+            alt="Volver"
           />
           <Card.Body>
-            <Card.Title>Subir</Card.Title>
+            <Card.Title>Volver</Card.Title>
           </Card.Body>
         </Card>
       )}
-      {items.map((item) => (
+      {items.map(({ name, id, price }) => (
         <Card
-          key={item}
+          key={name}
           style={{ width: "10rem", margin: "1rem" }}
           onClick={onClick}
+          id={id}
+          bg={defaultItem === name ? "primary" : ""}
+          text={defaultItem === name ? "white" : ""}
         >
           <Card.Img
             variant="top"
-            src={`https://juanda.certweb.infenlaces.com/images/6745.jpg`}
+            src={`https://juanda.certweb.infenlaces.com/images/${id}.jpg`}
+            alt={name}
+            id={id}
           />
           <Card.Body>
-            <Card.Title>{item}</Card.Title>
+            <Card.Title id={id}>{name}</Card.Title>
           </Card.Body>
+          {price && <Card.Footer id={id}>{price}€</Card.Footer>}
         </Card>
       ))}
     </div>
